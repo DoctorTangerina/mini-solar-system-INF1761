@@ -42,6 +42,8 @@ static void initialize (void)
   auto m_orbit_trf = Transform::Make();
   auto mar_orbit_trf = Transform::Make();
 
+  auto earth_moon_trf = Transform::Make();
+
   auto sun_trf = Transform::Make();
   auto mercury_trf = Transform::Make();
   auto venus_trf = Transform::Make();
@@ -53,7 +55,7 @@ static void initialize (void)
 
   mercury_trf->Translate(5.f, .0f, .0f);
   venus_trf->Translate(7.f, .0f, .0f);
-  earth_trf->Translate(11.f, .0f, .0f);
+  earth_moon_trf->Translate(11.f, .0f, .0f);
   moon_trf->Translate(2.f, .0f, .0f);
   mars_trf->Translate(14.f, .0f, .0f);
 
@@ -68,9 +70,10 @@ static void initialize (void)
   auto mar_orbit = Node::Make(mar_orbit_trf, { mars });
 
   auto moon = Node::Make(moon_trf, { Color::Make(1,1,1) }, { Disk::Make() });
+  auto earth = Node::Make(earth_trf, { Color::Make(0,0,1) }, { Disk::Make() });
   auto m_orbit = Node::Make(m_orbit_trf, { moon });
-  auto earth = Node::Make(earth_trf, { Color::Make(0,0,1) }, { Disk::Make() }, { m_orbit });
-  auto e_orbit = Node::Make(e_orbit_trf, { earth });
+  auto e_m_orbit = Node::Make(earth_moon_trf, { earth,  m_orbit });
+  auto e_orbit = Node::Make(e_orbit_trf, { e_m_orbit });
 
   auto venus = Node::Make(venus_trf, { Color::Make(.65f,.24f,.16f) }, { Disk::Make() });
   auto v_orbit = Node::Make(v_orbit_trf, { venus });
@@ -94,6 +97,12 @@ static void initialize (void)
   scene->AddEngine(Orbit::Make(e_orbit_trf, 1.f));
   scene->AddEngine(Orbit::Make(m_orbit_trf, 13.f));
   scene->AddEngine(Orbit::Make(mar_orbit_trf, .81f));
+
+  scene->AddEngine(Orbit::Make(mercury_trf, 6.25f));
+  scene->AddEngine(Orbit::Make(venus_trf, -1.5f));
+  scene->AddEngine(Orbit::Make(earth_trf, 60.f));
+  scene->AddEngine(Orbit::Make(moon_trf, 13.f));
+  scene->AddEngine(Orbit::Make(mars_trf, 59.f));
 }
 
 static void display (GLFWwindow* win)

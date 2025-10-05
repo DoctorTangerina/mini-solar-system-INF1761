@@ -12,7 +12,10 @@ Disk::Disk(int nslice)
 		float theta = (2.0f * M_PI * i) / m_nslice;
 		float x = cosf(theta);
 		float y = sinf(theta);
+		float s = 0.5f + 0.5f * x;
+		float t = 0.5f + 0.5f * y;
 		coord.push_back(x); coord.push_back(y);
+		coord.push_back(s); coord.push_back(t);
 	}
 
 	glGenVertexArrays(1, &m_vao);
@@ -22,8 +25,10 @@ Disk::Disk(int nslice)
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, coord.size() * sizeof(float), coord.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);  // coord
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 }
 
 DiskPtr Disk::Make(int nslice)

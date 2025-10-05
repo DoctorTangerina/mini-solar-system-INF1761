@@ -30,8 +30,8 @@ Quad::Quad (int nx, int ny)
   glBufferData(GL_ARRAY_BUFFER,2*grid->VertexCount()*sizeof(float),grid->GetCoords(),GL_STATIC_DRAW);
   glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,0,0);  // coord
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(3,2,GL_FLOAT,GL_FALSE,0,0);  // texcoord
-  glEnableVertexAttribArray(3);
+  glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,0,0);  // texcoord
+  glEnableVertexAttribArray(1);
   // create index buffer
   GLuint index;
   glGenBuffers(1,&index);
@@ -46,7 +46,7 @@ Quad::~Quad ()
 void Quad::Draw (StatePtr )
 {
   glBindVertexArray(m_vao);
-  glVertexAttrib3f(1,0.0f,0.0f,1.0f); // constant for all vertices
-  glVertexAttrib3f(2,1.0f,0.0f,0.0f); // constant for all vertices
+  //glVertexAttrib3f(1,0.0f,0.0f,1.0f); // constant for all vertices
+  //glVertexAttrib3f(2,1.0f,0.0f,0.0f); // constant for all vertices
   glDrawElements(GL_TRIANGLES,m_nind,GL_UNSIGNED_INT,0);
 }

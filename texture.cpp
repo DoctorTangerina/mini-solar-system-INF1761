@@ -14,6 +14,7 @@
 
 TexturePtr Texture::Make (const std::string& varname, const std::string& filename)
 {
+  std::cout << varname << ": " << filename << std::endl;
   return TexturePtr(new Texture(varname,filename));
 }
 TexturePtr Texture::Make (const std::string& varname, int width, int height)
@@ -65,6 +66,7 @@ Texture::Texture (const std::string& varname, const glm::vec3& texel)
     (unsigned char)(texel[1]*255),
     (unsigned char)(texel[2]*255),
   };
+
   glGenTextures(1,&m_tex);
   glBindTexture(GL_TEXTURE_2D,m_tex);
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,1,1,0,GL_RGB,GL_UNSIGNED_BYTE,color);

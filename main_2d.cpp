@@ -58,8 +58,8 @@ static void initialize (void)
   auto moon_trf = Transform::Make();
   auto mars_trf = Transform::Make();
 
+  bg_trf->Translate(-5.f, 0.f, .0f);
   bg_trf->Scale(40.f, 40.f, 1.f);
-  bg_trf->Translate(15.f, 15.f, -1.f);
 
   center_trf->Translate(15.f, 15.f, 0.f);
 
@@ -103,7 +103,7 @@ static void initialize (void)
   shader->Link();
 
   // build scene
-  auto root = Node::Make(shader, { bg, center });
+  auto root = Node::Make(shader, { center, bg });
   scene = Scene::Make(root);
   scene->AddEngine(Orbit::Make(mer_orbit_trf, 1.59f));
   scene->AddEngine(Orbit::Make(v_orbit_trf, 1.18f));

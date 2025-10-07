@@ -35,7 +35,12 @@ static void initialize (void)
 
   // create texture
   auto texSpace = Texture::Make("face", "./images/space.jpg");
-  auto texEarth = Texture::Make("face", "./images/earth.jpg");
+  auto texSun = Texture::Make("face", "./images/sun.jpg");
+  auto texMercury = Texture::Make("face", "./images/mercury.png");
+  auto texVenus = Texture::Make("face", "./images/venus.png");
+  auto texEarth = Texture::Make("face", "./images/earth.png");
+  auto texMoon = Texture::Make("face", "./images/moon.png");
+  auto texMars = Texture::Make("face", "./images/mars.png");
   auto texWhite = Texture::Make("face", glm::vec3(1.0f, 1.0f, 1.0f));
 
   // create objects
@@ -78,22 +83,22 @@ static void initialize (void)
   
   auto bg = Node::Make(bg_trf, { Color::Make(1,1,1), texSpace }, { Quad::Make() });
 
-  auto mars = Node::Make(mars_trf, { Color::Make(1,0,0), texWhite }, { Disk::Make() });
+  auto mars = Node::Make(mars_trf, { Color::Make(1,1,1), texMars }, { Disk::Make() });
   auto mar_orbit = Node::Make(mar_orbit_trf, { mars });
 
-  auto moon = Node::Make(moon_trf, { Color::Make(1,1,1), texWhite }, { Disk::Make() });
+  auto moon = Node::Make(moon_trf, { Color::Make(1,1,1), texMoon }, { Disk::Make() });
   auto earth = Node::Make(earth_trf, { Color::Make(1,1,1), texEarth }, { Disk::Make() });
   auto m_orbit = Node::Make(m_orbit_trf, { moon });
   auto e_m_orbit = Node::Make(earth_moon_trf, { earth,  m_orbit });
   auto e_orbit = Node::Make(e_orbit_trf, { e_m_orbit });
 
-  auto venus = Node::Make(venus_trf, { Color::Make(.65f,.24f,.16f), texWhite }, { Disk::Make() });
+  auto venus = Node::Make(venus_trf, { Color::Make(1,1,1), texVenus }, { Disk::Make() });
   auto v_orbit = Node::Make(v_orbit_trf, { venus });
 
-  auto mercury = Node::Make(mercury_trf, { Color::Make(.79f,.65f,.16f), texWhite }, { Disk::Make() });
+  auto mercury = Node::Make(mercury_trf, { Color::Make(1,1,1), texMercury }, { Disk::Make() });
   auto mer_orbit = Node::Make(mer_orbit_trf, { mercury });
 
-  auto sun = Node::Make(sun_trf, { Color::Make(1,1,0), texWhite }, { Disk::Make() });
+  auto sun = Node::Make(sun_trf, { Color::Make(1,1,1), texSun }, { Disk::Make() });
   auto center = Node::Make(center_trf, { sun, mer_orbit, v_orbit, e_orbit , mar_orbit });
 
   // create shader
@@ -105,12 +110,15 @@ static void initialize (void)
   // build scene
   auto root = Node::Make(shader, { center, bg });
   scene = Scene::Make(root);
+
+  //translate
   scene->AddEngine(Orbit::Make(mer_orbit_trf, 1.59f));
   scene->AddEngine(Orbit::Make(v_orbit_trf, 1.18f));
   scene->AddEngine(Orbit::Make(e_orbit_trf, 1.f));
   scene->AddEngine(Orbit::Make(m_orbit_trf, 13.f));
   scene->AddEngine(Orbit::Make(mar_orbit_trf, .81f));
 
+  //rotation
   scene->AddEngine(Orbit::Make(mercury_trf, 6.25f));
   scene->AddEngine(Orbit::Make(venus_trf, -1.5f));
   scene->AddEngine(Orbit::Make(earth_trf, 60.f));

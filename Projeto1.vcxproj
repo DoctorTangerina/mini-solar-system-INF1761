@@ -127,13 +127,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"D:\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,13 +144,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"D:\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -159,13 +159,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"D:\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -176,13 +176,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\puc\cg\include;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;C:\Users\Usuário\Downloads\glad\include;C:\Users\Usuário\Downloads\glm-master\glm-master;C:\Users\Usuário\Downloads\glad\src;C:\Users\Usuário\Downloads\glad;C:\Users\Usuário\Downloads\stb-master</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>"C:\Users\arthu\OneDrive\Área de Trabalho\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\puc\cg\lib-vc2022;C:\Users\Usuário\Downloads\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"D:\puc\cg\lib-vc2022\*.lib";opengl32.lib;glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

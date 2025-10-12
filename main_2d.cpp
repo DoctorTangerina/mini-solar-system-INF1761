@@ -122,7 +122,7 @@ static void initialize (void)
   scene->AddEngine(Orbit::Make(mercury_trf, 6.25f));
   scene->AddEngine(Orbit::Make(venus_trf, -1.5f));
   scene->AddEngine(Orbit::Make(earth_trf, 60.f));
-  scene->AddEngine(Orbit::Make(moon_trf, 13.f));
+  //scene->AddEngine(Orbit::Make(moon_trf, 13.f));
   scene->AddEngine(Orbit::Make(mars_trf, 59.f));
 }
 

@@ -30,74 +30,75 @@ static ScenePtr scene;
 static Camera3DPtr camera;
 static ArcballPtr arcball;
 
-static void initialize (void)
+static void initialize(void)
 {
-  // set background color: white 
-  glClearColor(1.0f,1.0f,1.0f,1.0f);
-  // enable depth test 
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_CULL_FACE);  // cull back faces
+    // set background color: black 
+    glClearColor(0.f, .0f, .0f, 1.0f);
 
-  // create objects
-  camera = Camera3D::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
-  //camera->SetOrtho(true);
-  arcball = camera->CreateArcball();
+    // enable depth test 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);  // cull back faces
 
-  //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
-  LightPtr light = Light::Make(0.0f,0.0f,0.0f,1.0f,"camera");
+    // create objects
+    camera = Camera3D::Make(viewer_pos[0], viewer_pos[1], viewer_pos[2]);
+    //camera->SetOrtho(true);
+    arcball = camera->CreateArcball();
 
-  AppearancePtr white = Material::Make(1.0f,1.0f,1.0f);
-  AppearancePtr tex_earth = Texture::Make("decal", "./images/earth.jpg");
+    //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
+    LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "camera");
 
-  // create shader
-  ShaderPtr shader = Shader::Make(light, "camera");
-  shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
-  shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
-  shader->Link();
+    // appearences
+    AppearancePtr white = Material::Make(1.0f, 1.0f, 1.0f);
+    /*AppearancePtr texSpace = Texture::Make("decal", "./images/space.jpg");
+    AppearancePtr texSun = Texture::Make("decal", "./images/sun.jpg");
+    AppearancePtr texMercury = Texture::Make("decal", "./images/mercury.png");
+    AppearancePtr texVenus = Texture::Make("decal", "./images/venus.png");*/
+    AppearancePtr texEarth = Texture::Make("decal", "./images/earth.jpg");
+    /*AppearancePtr texMoon = Texture::Make("decal", "./images/moon.png");
+    AppearancePtr texMars = Texture::Make("decal", "./images/mars.png");*/
 
-  // Define a different shader for texture mapping
-  // An alternative would be to use only this shader with a "white" texture for untextured objects
-  ShaderPtr shd_tex = Shader::Make(light, "camera");
-  shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
-  shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
-  shd_tex->Link();
+    // create shader
+    ShaderPtr shader = Shader::Make(light, "camera");
+    shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
+    shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
+    shader->Link();
 
-  TransformPtr trf_table = Transform::Make();
-  trf_table->Scale(3.0f,0.3f,3.0f);
-  trf_table->Translate(0.0f,-1.0f,0.0f);
+    // Define a different shader for texture mapping
+    // An alternative would be to use only this shader with a "white" texture for untextured objects
+    ShaderPtr shd_tex = Shader::Make(light, "camera");
+    shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
+    shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
+    shd_tex->Link();
 
-  TransformPtr trf_box = Transform::Make();
-  trf_box->Scale(1.f,.5f,1.f);
-  
-  TransformPtr trf_ball = Transform::Make();
-  trf_ball->Scale(.2f, .2f, .2f);
-  trf_ball->Translate(-0.8f, 3.5f, -0.8f);
+    Error::Check("before shps");
+    ShapePtr sphere = Sphere::Make();
+    Error::Check("after shps");
 
-  TransformPtr trf_can = Transform::Make();
-  trf_can->Scale(.2f, .2f, .2f);
-  trf_can->Translate(0.8f, 3.5f, 0.8f);
+    //transform
+    auto bg_trf = Transform::Make();
+    auto center_trf = Transform::Make();
+    auto mer_orbit_trf = Transform::Make();
+    auto v_orbit_trf = Transform::Make();
+    auto e_orbit_trf = Transform::Make();
+    auto m_orbit_trf = Transform::Make();
+    auto mar_orbit_trf = Transform::Make();
 
-  TransformPtr trf_earth = Transform::Make();
-  trf_earth->Scale(.5f, .5f, .5f);
-  trf_earth->Translate(-2.f, 1.f, -2.f);
+    auto earth_moon_trf = Transform::Make();
 
-  TransformPtr trf_wood = Transform::Make();
-  trf_wood->Scale(0.4f, 0.4f, 0.4f);
-  trf_wood->Translate(2.5f, 1.f, 2.5f);
+    auto sun_trf = Transform::Make();
+    auto mercury_trf = Transform::Make();
+    auto venus_trf = Transform::Make();
+    auto earth_trf = Transform::Make();
+    auto moon_trf = Transform::Make();
+    auto mars_trf = Transform::Make();
 
-  Error::Check("before shps");
-  //Error::Check("before quad");
-  //ShapePtr quad = Quad::Make();
-  Error::Check("before sphere");
-  ShapePtr sphere = Sphere::Make();
-  Error::Check("after shps");
+    // build scene
 
-  // build scene
+    auto earth = Node::Make(earth_trf, { white, texEarth }, {sphere});
+    auto center = Node::Make(center_trf, { earth });
 
-  auto earth = Node::Make();
-
-  NodePtr root = Node::Make(shader, {earth});
-  scene = Scene::Make(root);
+    NodePtr root = Node::Make(shd_tex, { center });
+    scene = Scene::Make(root);
 }
 
 static void display (GLFWwindow* win)

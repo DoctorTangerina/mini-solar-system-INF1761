@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arcball.cpp" />
+    <ClCompile Include="camera3d.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="computeshader.cpp" />
     <ClCompile Include="disk.cpp" />

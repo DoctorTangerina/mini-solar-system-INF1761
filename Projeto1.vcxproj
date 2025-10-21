@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="camera2d.cpp" />
+    <ClCompile Include="arcball.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="computeshader.cpp" />
     <ClCompile Include="disk.cpp" />
@@ -27,12 +27,15 @@
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="light.cpp" />
-    <ClCompile Include="main_2d.cpp" />
+    <ClCompile Include="main_3d.cpp" />
+    <ClCompile Include="material.cpp" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="orbit.cpp" />
+    <ClCompile Include="polyoffset.cpp" />
     <ClCompile Include="quad.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="sphere.cpp" />
     <ClCompile Include="state.cpp" />
     <ClCompile Include="texbuffer.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -40,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appearance.h" />
+    <ClInclude Include="arcball.h" />
     <ClInclude Include="camera.h" />
-    <ClInclude Include="camera2d.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="computeshader.h" />
     <ClInclude Include="disk.h" />
@@ -50,12 +53,15 @@
     <ClInclude Include="grid.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="orbit.h" />
+    <ClInclude Include="polyoffset.h" />
     <ClInclude Include="quad.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shape.h" />
+    <ClInclude Include="sphere.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="texbuffer.h" />
     <ClInclude Include="texture.h" />

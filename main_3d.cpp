@@ -20,11 +20,12 @@
 #include "shader.h"
 #include "light.h"
 #include "polyoffset.h"
+#include "orbit.h"
 
 #include <iostream>
 #include <cassert>
 
-static float viewer_pos[3] = {2.0f, 3.5f, 4.0f};
+static float viewer_pos[3] = {10.f, 5.f, 20.0f};
 
 static ScenePtr scene;
 static Camera3DPtr camera;
@@ -45,27 +46,39 @@ static void initialize(void)
     arcball = camera->CreateArcball();
 
     //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
-    LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "camera");
+    LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "world");
 
     // appearences
     AppearancePtr white = Material::Make(1.0f, 1.0f, 1.0f);
-    /*AppearancePtr texSpace = Texture::Make("decal", "./images/space.jpg");
+    AppearancePtr red = Material::Make(1.f, 0, 0);
+
+    // background
+    //AppearancePtr texSun = Texture::Make("decal", "./images/background.jpg"); 
+
+    // diffuse textures
     AppearancePtr texSun = Texture::Make("decal", "./images/sun.jpg");
     AppearancePtr texMercury = Texture::Make("decal", "./images/mercury.png");
-    AppearancePtr texVenus = Texture::Make("decal", "./images/venus.png");*/
+    AppearancePtr texVenus = Texture::Make("decal", "./images/venus.png");
     AppearancePtr texEarth = Texture::Make("decal", "./images/earth.jpg");
-    /*AppearancePtr texMoon = Texture::Make("decal", "./images/moon.png");
-    AppearancePtr texMars = Texture::Make("decal", "./images/mars.png");*/
+    AppearancePtr texMoon = Texture::Make("decal", "./images/moon.jpg");
+    AppearancePtr texMars = Texture::Make("decal", "./images/mars.png");
 
-    // create shader
-    ShaderPtr shader = Shader::Make(light, "camera");
-    shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
-    shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
-    shader->Link();
+    // bump map
+    //AppearancePtr texMercuryNormal = Texture::Make("normal", "./images/mercury.png");
+    //AppearancePtr texVenusNormal = Texture::Make("normal", "./images/venus.png");
+    AppearancePtr texEarthNormal = Texture::Make("normal", "./images/earth-normal.png");
+    AppearancePtr texMoonNormal = Texture::Make("normal", "./images/moon-normal.jpg");
+    //AppearancePtr texMarsNormal = Texture::Make("normal", "./images/mars.png");
 
+    // create sun shader (without shadow)
+    ShaderPtr shader_sun = Shader::Make(light, "world");
+    shader_sun->AttachVertexShader("./shaders/ilum_vert/vertex_sun.glsl");
+    shader_sun->AttachFragmentShader("./shaders/ilum_vert/fragment_sun.glsl");
+    shader_sun->Link();
+    
     // Define a different shader for texture mapping
     // An alternative would be to use only this shader with a "white" texture for untextured objects
-    ShaderPtr shd_tex = Shader::Make(light, "camera");
+    ShaderPtr shd_tex = Shader::Make(light, "world");
     shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
     shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
     shd_tex->Link();
@@ -74,16 +87,21 @@ static void initialize(void)
     ShapePtr sphere = Sphere::Make();
     Error::Check("after shps");
 
-    //transform
+    // make transform
     auto bg_trf = Transform::Make();
-    auto center_trf = Transform::Make();
+
     auto mer_orbit_trf = Transform::Make();
     auto v_orbit_trf = Transform::Make();
     auto e_orbit_trf = Transform::Make();
     auto m_orbit_trf = Transform::Make();
     auto mar_orbit_trf = Transform::Make();
 
-    auto earth_moon_trf = Transform::Make();
+    auto center_trf = Transform::Make();
+    auto mer_center_trf = Transform::Make();
+    auto v_center_trf = Transform::Make();
+    auto e_center_trf = Transform::Make();
+    auto m_center_trf = Transform::Make();
+    auto mar_center_trf = Transform::Make();
 
     auto sun_trf = Transform::Make();
     auto mercury_trf = Transform::Make();
@@ -92,13 +110,61 @@ static void initialize(void)
     auto moon_trf = Transform::Make();
     auto mars_trf = Transform::Make();
 
+    // move objects
+    mer_center_trf->Translate(3.f, 0.f, 0.f);
+    v_center_trf->Translate(5.f, 0.f, 0.f);
+    e_center_trf->Translate(9.f, 0.f, 0.f);
+    m_center_trf->Translate(2.f, 0.f, 0.f);
+    mar_center_trf->Translate(13.f, 0.f, 0.f);
+
+    sun_trf->Scale(2.f, 2.f, 2.f);
+    mercury_trf->Scale(.3f, .3f, .3f);
+    venus_trf->Scale(.8f, .8f, .8f);
+    // earth_trf->Scale(1.f, 1.f, 1.f);
+    moon_trf->Scale(.2f, .2f, .2f);
+    mars_trf->Scale(.4f, .4f, .4f);
+
     // build scene
 
-    auto earth = Node::Make(earth_trf, { white, texEarth }, {sphere});
-    auto center = Node::Make(center_trf, { earth });
+    auto mars = Node::Make(mars_trf, { white, texMars }, {sphere});
+    auto mar_center = Node::Make(mar_center_trf, { mars });
+    auto mar_orbit = Node::Make(mar_orbit_trf, { mar_center });
+
+    auto moon = Node::Make(moon_trf, { white, texMoon }, { sphere });
+    auto earth = Node::Make(earth_trf, { white, texEarth }, { sphere });
+    auto m_center = Node::Make(m_center_trf, { moon });
+    auto m_orbit = Node::Make(m_orbit_trf, { m_center });
+    auto e_center = Node::Make(e_center_trf, { earth,  m_orbit });
+    auto e_orbit = Node::Make(e_orbit_trf, { e_center });
+
+    auto venus = Node::Make(venus_trf, { white, texVenus }, { sphere });
+    auto v_center = Node::Make(v_center_trf, { venus });
+    auto v_orbit = Node::Make(v_orbit_trf, { v_center });
+
+    auto mercury = Node::Make(mercury_trf, { white, texMercury }, { sphere });
+    auto mer_center = Node::Make(mer_center_trf, { mercury });
+    auto mer_orbit = Node::Make(mer_orbit_trf, { mer_center });
+
+    auto sun = Node::Make(shader_sun, sun_trf, { texSun }, { sphere });
+    auto center = Node::Make(center_trf, { sun, mer_orbit, v_orbit, e_orbit , mar_orbit});
 
     NodePtr root = Node::Make(shd_tex, { center });
     scene = Scene::Make(root);
+
+    //translate
+    scene->AddEngine(Orbit::Make(mer_orbit_trf, 1.59f));
+    scene->AddEngine(Orbit::Make(v_orbit_trf, 1.18f));
+    scene->AddEngine(Orbit::Make(e_orbit_trf, 1.f));
+    scene->AddEngine(Orbit::Make(m_orbit_trf, 13.f));
+    scene->AddEngine(Orbit::Make(mar_orbit_trf, .81f));
+
+    //rotation
+    scene->AddEngine(Orbit::Make(sun_trf, 5.f));
+    scene->AddEngine(Orbit::Make(mercury_trf, 45.25f));
+    scene->AddEngine(Orbit::Make(venus_trf, -30.f));
+    scene->AddEngine(Orbit::Make(earth_trf, 60.f));
+    //scene->AddEngine(Orbit::Make(moon_trf, 13.f));
+    scene->AddEngine(Orbit::Make(mars_trf, 59.f));
 }
 
 static void display (GLFWwindow* win)
@@ -157,6 +223,11 @@ static void mousebutton (GLFWwindow* win, int button, int action, int mods)
     glfwSetCursorPosCallback(win, nullptr);      // callback disabled
 }
 
+static void update(float dt)
+{
+    scene->Update(dt);
+}
+
 int main ()
 {
   glfwInit();
@@ -187,7 +258,11 @@ int main ()
 
   initialize();
 
+  float t0 = float(glfwGetTime());
   while(!glfwWindowShouldClose(win)) {
+    float t = float(glfwGetTime());
+    update(t - t0);
+    t0 = t;
     display(win);
     glfwSwapBuffers(win);
     glfwPollEvents();

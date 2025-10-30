@@ -64,11 +64,11 @@ static void initialize(void)
     AppearancePtr texMars = Texture::Make("decal", "./images/mars.png");
 
     // bump map
-    //AppearancePtr texMercuryNormal = Texture::Make("normal", "./images/mercury.png");
-    //AppearancePtr texVenusNormal = Texture::Make("normal", "./images/venus.png");
+    AppearancePtr texMercuryNormal = Texture::Make("normal", "./images/mercury-normal.png");
+    AppearancePtr texVenusNormal = Texture::Make("normal", "./images/venus-normal.png");
     AppearancePtr texEarthNormal = Texture::Make("normal", "./images/earth-normal.png");
     AppearancePtr texMoonNormal = Texture::Make("normal", "./images/moon-normal.jpg");
-    //AppearancePtr texMarsNormal = Texture::Make("normal", "./images/mars.png");
+    AppearancePtr texMarsNormal = Texture::Make("normal", "./images/mars-normal.png");
 
     // create sun shader (without shadow)
     ShaderPtr shader_sun = Shader::Make(light, "world");
@@ -126,22 +126,22 @@ static void initialize(void)
 
     // build scene
 
-    auto mars = Node::Make(mars_trf, { white, texMars }, {sphere});
+    auto mars = Node::Make(mars_trf, { white, texMars, texMarsNormal }, {sphere});
     auto mar_center = Node::Make(mar_center_trf, { mars });
     auto mar_orbit = Node::Make(mar_orbit_trf, { mar_center });
 
-    auto moon = Node::Make(moon_trf, { white, texMoon }, { sphere });
-    auto earth = Node::Make(earth_trf, { white, texEarth }, { sphere });
+    auto moon = Node::Make(moon_trf, { white, texMoon, texMoonNormal }, { sphere });
+    auto earth = Node::Make(earth_trf, { white, texEarth, texEarthNormal }, { sphere });
     auto m_center = Node::Make(m_center_trf, { moon });
     auto m_orbit = Node::Make(m_orbit_trf, { m_center });
     auto e_center = Node::Make(e_center_trf, { earth,  m_orbit });
     auto e_orbit = Node::Make(e_orbit_trf, { e_center });
 
-    auto venus = Node::Make(venus_trf, { white, texVenus }, { sphere });
+    auto venus = Node::Make(venus_trf, { white, texVenus, texVenusNormal }, { sphere });
     auto v_center = Node::Make(v_center_trf, { venus });
     auto v_orbit = Node::Make(v_orbit_trf, { v_center });
 
-    auto mercury = Node::Make(mercury_trf, { white, texMercury }, { sphere });
+    auto mercury = Node::Make(mercury_trf, { white, texMercury, texMercuryNormal }, { sphere });
     auto mer_center = Node::Make(mer_center_trf, { mercury });
     auto mer_orbit = Node::Make(mer_orbit_trf, { mer_center });
 
@@ -249,7 +249,7 @@ int main ()
   
   glfwMakeContextCurrent(win);
 #ifdef _WIN32
-  if (!gladLoadGL(glfwGetProcAddress)) {
+  if (!gladLoadGL()) {
       printf("Failed to initialize GLAD OpenGL context\n");
       exit(1);
   }

@@ -4,6 +4,7 @@ in data {
   vec3 n;
   vec3 l;
   vec3 ve;
+  mat3 tbn;
   vec2 texcoord;
 } f;
 
@@ -19,7 +20,7 @@ uniform float mshi;
 out vec4 color;
 
 uniform sampler2D decal;
-uniform sampler2D normalMap;
+uniform sampler2D normal;
 
 // converte [0,1] -> [-1,1]
 vec3 expand (vec3 v)
@@ -29,9 +30,9 @@ vec3 expand (vec3 v)
 
 void main (void)
 {
-    vec3 normalMapVal = expand(texture(normalMap, f.texcoord).rgb);
+    vec3 normal = normalize(f.tbn * expand(texture(normal, f.texcoord).rgb));
 
-    vec3 normal = normalize(f.n + 0.5 * normalMapVal);
+    //vec3 normal = normalize(f.n + 0.5 * normalMapVal);
 
     vec3 light = normalize(f.l);
     vec3 veye = normalize(f.ve);

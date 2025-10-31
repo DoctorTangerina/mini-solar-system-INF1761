@@ -2,6 +2,7 @@
 
 layout(location = 0) in vec4 coord;
 layout(location = 1) in vec3 normal;
+layout(location = 2) in vec3 tangent;
 layout(location = 3) in vec2 texcoord;
 
 uniform mat4 Mv; 
@@ -14,12 +15,19 @@ out data {
   vec3 n;
   vec3 l;
   vec3 ve;
+  mat3 tbn;
   vec2 texcoord;
 } v;
 
 void main (void) 
 {
     vec3 neye = normalize(vec3(Mn*vec4(normal,0.0)));
+    vec3 teye = normalize(vec3(Mn*vec4(tangent, 0.0)));
+    teye = normalize(teye - dot(teye, neye) * neye);
+
+    vec3 beye = cross(teye, neye);
+
+    mat3 TBN = mat3(teye, beye, neye);
     vec3 veye = vec3(Mv*coord);
     vec3 light;
 
@@ -34,6 +42,7 @@ void main (void)
     v.n = neye;
     v.l = light;
     v.ve = veye;
+    v.tbn = TBN;
     v.texcoord = texcoord;
 
     gl_Position = Mvp*coord; 

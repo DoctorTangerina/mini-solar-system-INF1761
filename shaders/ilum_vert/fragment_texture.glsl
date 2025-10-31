@@ -21,31 +21,30 @@ out vec4 color;
 uniform sampler2D decal;
 uniform sampler2D normalMap;
 
+// converte [0,1] -> [-1,1]
 vec3 expand (vec3 v)
 {
-  return (v-0.5) * 2;
+  return (v-0.5) * 2.0;
 }
 
 void main (void)
 {
-  vec3 light = normalize(f.l);
-  vec3 normal = expand(vec3(texture(normalMap, f.texcoord)));
-  vec3 veye = normalize(f.ve);
+    vec3 normalMapVal = expand(texture(normalMap, f.texcoord).rgb);
 
-  if (light.z > 0)
-  {
-    float ndotl = dot(normal,light);
-    color = mamb*lamb + mdif * ldif * max(0,ndotl); 
+    vec3 normal = normalize(f.n + 0.5 * normalMapVal);
 
-    if (ndotl > 0) {
-      vec3 refl = normalize(reflect(-light,normal));
-      color += mspe * lspe * pow(max(0,dot(refl,normalize(-veye))),mshi); 
-    } 
-  }
-  else
-    color = mamb*lamb;
-  
+    vec3 light = normalize(f.l);
+    vec3 veye = normalize(f.ve);
 
-  color = color * texture(decal,f.texcoord);
+    color = mamb * lamb;
+
+    float ndotl = max(dot(normal, light), 0.0);
+    color += mdif * ldif * ndotl;
+
+    if (ndotl > 0.0) {
+        vec3 refl = normalize(reflect(-light, normal));
+        color += mspe * lspe * pow(max(dot(refl, veye),0.0), mshi);
+    }
+
+    color *= texture(decal, f.texcoord);
 }
-

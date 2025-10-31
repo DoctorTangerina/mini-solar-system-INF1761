@@ -2,7 +2,6 @@
 
 layout(location = 0) in vec4 coord;
 layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 tangent;
 layout(location = 3) in vec2 texcoord;
 
 uniform mat4 Mv; 
@@ -20,22 +19,22 @@ out data {
 
 void main (void) 
 {
-  vec3 veye = vec3(Mv*coord);
-  vec3 light;
+    vec3 neye = normalize(vec3(Mn*vec4(normal,0.0)));
+    vec3 veye = vec3(Mv*coord);
+    vec3 light;
 
-  vec3 normal_eye = normalize(vec3(Mn * vec4(normal, 0.0)));
-  vec3 tangent_eye = normalize(vec3(Mn * vec4(tangent, 0.0)));
-  vec3 binormal_eye = cross(normal_eye, tangent_eye);
+    if (lpos.w == 0)
+        light = normalize(vec3(lpos));
+    else
+        light = normalize(vec3(lpos)-veye);
 
-  mat3 rotation = transpose(mat3(tangent_eye,binormal_eye,normal_eye));
-  light = rotation * normalize(vec3(lpos)-veye);   
-  veye = rotation * normalize(-veye); 
+    veye = normalize(-veye);
 
-  
-  v.n = normal_eye;
-  v.l = light;
-  v.ve = veye; 
-  v.texcoord = texcoord;
-  gl_Position = Mvp*coord; 
+    // passar dados para o fragment shader
+    v.n = neye;
+    v.l = light;
+    v.ve = veye;
+    v.texcoord = texcoord;
+
+    gl_Position = Mvp*coord; 
 }
-

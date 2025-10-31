@@ -21,6 +21,8 @@
 #include "light.h"
 #include "polyoffset.h"
 #include "orbit.h"
+#include "earth_camera_engine.h"
+#include "cube.h"
 
 #include <iostream>
 #include <cassert>
@@ -29,7 +31,10 @@ static float viewer_pos[3] = {10.f, 5.f, 20.0f};
 
 static ScenePtr scene;
 static Camera3DPtr camera;
+static Camera3DPtr camera_Earth;
 static ArcballPtr arcball;
+
+static bool in_earth_cam = false;
 
 static void initialize(void)
 {
@@ -45,15 +50,17 @@ static void initialize(void)
     //camera->SetOrtho(true);
     arcball = camera->CreateArcball();
 
+    camera_Earth = Camera3D::Make(9.f, 0.f, 0.f); // posição da Terra
+    camera_Earth->SetCenter(11.f, 0.f, 0.f);      // direção da Lua
+    camera_Earth->SetUpDir(0.f, 1.f, 0.f);
+    camera_Earth->SetZPlanes(0.01f, 1000.f);
+
     //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
     LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "world");
 
     // appearences
     AppearancePtr white = Material::Make(1.0f, 1.0f, 1.0f);
     AppearancePtr red = Material::Make(1.f, 0, 0);
-
-    // background
-    //AppearancePtr texSun = Texture::Make("decal", "./images/background.jpg"); 
 
     // diffuse textures
     AppearancePtr texSun = Texture::Make("decal", "./images/sun.jpg");
@@ -62,6 +69,9 @@ static void initialize(void)
     AppearancePtr texEarth = Texture::Make("decal", "./images/earth.jpg");
     AppearancePtr texMoon = Texture::Make("decal", "./images/moon.jpg");
     AppearancePtr texMars = Texture::Make("decal", "./images/mars.png");
+
+    AppearancePtr texBg = Texture::Make("decal", "./images/space.jpg");
+
 
     // bump map
     AppearancePtr texMercuryNormal = Texture::Make("normal", "./images/mercury-normal.png");
@@ -85,6 +95,8 @@ static void initialize(void)
 
     Error::Check("before shps");
     ShapePtr sphere = Sphere::Make();
+    Error::Check("after shps");
+    ShapePtr cube = Cube::Make();
     Error::Check("after shps");
 
     // make transform
@@ -116,6 +128,7 @@ static void initialize(void)
     e_center_trf->Translate(9.f, 0.f, 0.f);
     m_center_trf->Translate(2.f, 0.f, 0.f);
     mar_center_trf->Translate(13.f, 0.f, 0.f);
+    bg_trf->Translate(0.f, -15.f, 0.f);
 
     sun_trf->Scale(2.f, 2.f, 2.f);
     mercury_trf->Scale(.3f, .3f, .3f);
@@ -124,7 +137,11 @@ static void initialize(void)
     moon_trf->Scale(.2f, .2f, .2f);
     mars_trf->Scale(.4f, .4f, .4f);
 
+    bg_trf->Scale(50.f, 50.f, 50.f);
+
     // build scene
+
+    auto bg = Node::Make(shader_sun, bg_trf, { white, texBg }, { cube });
 
     auto mars = Node::Make(mars_trf, { white, texMars, texMarsNormal }, {sphere});
     auto mar_center = Node::Make(mar_center_trf, { mars });
@@ -148,7 +165,7 @@ static void initialize(void)
     auto sun = Node::Make(shader_sun, sun_trf, { texSun }, { sphere });
     auto center = Node::Make(center_trf, { sun, mer_orbit, v_orbit, e_orbit , mar_orbit});
 
-    NodePtr root = Node::Make(shd_tex, { center });
+    NodePtr root = Node::Make(shd_tex, { center, bg });
     scene = Scene::Make(root);
 
     //translate
@@ -165,13 +182,15 @@ static void initialize(void)
     scene->AddEngine(Orbit::Make(earth_trf, 60.f));
     //scene->AddEngine(Orbit::Make(moon_trf, 13.f));
     scene->AddEngine(Orbit::Make(mars_trf, 59.f));
+    scene->AddEngine(Earth_camera_engine::Make(earth_trf, 60.f));
+
 }
 
 static void display (GLFWwindow* win)
 { 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear window 
   Error::Check("before render");
-  scene->Render(camera);
+  scene->Render(in_earth_cam ? camera_Earth : camera);
   Error::Check("after render");
 }
 
@@ -186,6 +205,8 @@ static void keyboard (GLFWwindow* window, int key, int scancode, int action, int
 {
   if (key == GLFW_KEY_Q && action == GLFW_PRESS)
     glfwSetWindowShouldClose(window, GLFW_TRUE);
+  if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    in_earth_cam = !in_earth_cam;
 }
 
 static void resize (GLFWwindow* win, int width, int height)
@@ -205,7 +226,7 @@ static void cursorpos (GLFWwindow* win, double x, double y)
 }
 static void cursorinit (GLFWwindow* win, double x, double y)
 {
-  // convert screen pos (upside down) to framebuffer pos (e.g., retina displays)
+  // convert scre,en pos (upside down) to framebuffer pos (e.g., retina displays)
   int wn_w, wn_h, fb_w, fb_h;
   glfwGetWindowSize(win, &wn_w, &wn_h);
   glfwGetFramebufferSize(win, &fb_w, &fb_h);
@@ -226,6 +247,7 @@ static void mousebutton (GLFWwindow* win, int button, int action, int mods)
 static void update(float dt)
 {
     scene->Update(dt);
+
 }
 
 int main ()

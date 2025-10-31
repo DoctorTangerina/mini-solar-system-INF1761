@@ -23,7 +23,9 @@
     <ClCompile Include="camera3d.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="computeshader.cpp" />
+    <ClCompile Include="cube.cpp" />
     <ClCompile Include="disk.cpp" />
+    <ClCompile Include="earth_camera_engine.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="image.cpp" />
@@ -48,7 +50,9 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="computeshader.h" />
+    <ClInclude Include="cube.h" />
     <ClInclude Include="disk.h" />
+    <ClInclude Include="earth_camera_engine.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="grid.h" />

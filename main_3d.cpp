@@ -50,10 +50,7 @@ static void initialize(void)
     //camera->SetOrtho(true);
     arcball = camera->CreateArcball();
 
-    camera_Earth = Camera3D::Make(9.f, 0.f, 0.f); // posição da Terra
-    camera_Earth->SetCenter(11.f, 0.f, 0.f);      // direção da Lua
-    camera_Earth->SetUpDir(0.f, 1.f, 0.f);
-    camera_Earth->SetZPlanes(0.01f, 1000.f);
+    camera_Earth = Camera3D::Make(9.f, 0.f, 0.f);
 
     //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
     LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "world");
@@ -168,6 +165,8 @@ static void initialize(void)
     NodePtr root = Node::Make(shd_tex, { center, bg });
     scene = Scene::Make(root);
 
+    camera_Earth->SetReference(moon);
+
     //translate
     scene->AddEngine(Orbit::Make(mer_orbit_trf, 1.59f));
     scene->AddEngine(Orbit::Make(v_orbit_trf, 1.18f));
@@ -182,7 +181,7 @@ static void initialize(void)
     scene->AddEngine(Orbit::Make(earth_trf, 60.f));
     //scene->AddEngine(Orbit::Make(moon_trf, 13.f));
     scene->AddEngine(Orbit::Make(mars_trf, 59.f));
-    scene->AddEngine(Earth_camera_engine::Make(earth_trf, 60.f));
+    scene->AddEngine(Earth_camera_engine::Make(earth, moon, camera_Earth));
 
 }
 
@@ -271,7 +270,7 @@ int main ()
   
   glfwMakeContextCurrent(win);
 #ifdef _WIN32
-  if (!gladLoadGL()) {
+  if (!gladLoadGL(glfwGetProcAddress)) {
       printf("Failed to initialize GLAD OpenGL context\n");
       exit(1);
   }

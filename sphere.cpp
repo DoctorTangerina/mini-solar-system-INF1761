@@ -74,6 +74,7 @@ Sphere::~Sphere ()
 
 void Sphere::Draw (StatePtr st)
 {
+  glEnable(GL_CULL_FACE);
   glBindVertexArray(m_vao);
   glDrawElements(GL_TRIANGLES,m_nind,GL_UNSIGNED_INT,0);
 }

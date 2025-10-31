@@ -43,6 +43,7 @@ static void initialize(void)
 
     // enable depth test 
     glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_BACK);
     glEnable(GL_CULL_FACE);  // cull back faces
 
     // create objects
@@ -50,7 +51,7 @@ static void initialize(void)
     //camera->SetOrtho(true);
     arcball = camera->CreateArcball();
 
-    camera_Earth = Camera3D::Make(9.f, 0.f, 0.f);
+    camera_Earth = Camera3D::Make(1.f, 0.f, 0.f);
 
     //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
     LightPtr light = Light::Make(0.0f, 0.0f, 0.0f, 1.0f, "world");
@@ -165,7 +166,7 @@ static void initialize(void)
     NodePtr root = Node::Make(shd_tex, { center, bg });
     scene = Scene::Make(root);
 
-    camera_Earth->SetReference(moon);
+    //camera_Earth->SetReference(e_center);
 
     //translate
     scene->AddEngine(Orbit::Make(mer_orbit_trf, 1.59f));

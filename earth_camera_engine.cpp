@@ -9,9 +9,9 @@ Earth_camera_enginePtr Earth_camera_engine::Make(NodePtr earth_trf, NodePtr moon
 }
 
 void Earth_camera_engine::Update(float dt)
-{/*
+{
 	glm::mat4 mm = _moon_node->GetModelMatrix();
 	glm::mat4 em = _earth_node->GetModelMatrix();
-	_earth_cam->SetCenter(mm[0][0], 0, mm[2][2]);
-	_earth_cam->SetEye(em[0][0], 0, em[2][2]);*/
+	_earth_cam->SetEye(em[3][0], em[3][1], em[3][2]);
+	_earth_cam->SetCenter(mm[3][0], mm[3][1], mm[3][2]);
 }

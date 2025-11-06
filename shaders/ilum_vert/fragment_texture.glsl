@@ -4,7 +4,7 @@ in data {
   vec3 n;
   vec3 l;
   vec3 ve;
-  mat3 tbn;
+  vec3 t;
   vec2 texcoord;
 } f;
 
@@ -30,7 +30,14 @@ vec3 expand (vec3 v)
 
 void main (void)
 {
-    vec3 normal = normalize(f.tbn * expand(texture(normal, f.texcoord).rgb));
+    vec3 tang = normalize(f.t);
+    vec3 norm = normalize(f.n);
+    tang = normalize(tang - dot(tang, norm) * norm);
+
+    vec3 binorm = cross(tang, norm);
+
+    mat3 TBN = mat3(tang, binorm, norm);
+    vec3 normal = normalize(TBN * expand(texture(normal, f.texcoord).rgb));
 
     //vec3 normal = normalize(f.n + 0.5 * normalMapVal);
 

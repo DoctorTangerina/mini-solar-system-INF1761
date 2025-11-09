@@ -12,6 +12,7 @@ uniform vec4 mamb;
 uniform vec4 mdif;
 uniform vec4 mspe;
 uniform float mshi;
+uniform float mopacity;
 
 out vec4 fcolor;
 
@@ -27,6 +28,7 @@ void main (void)
     vec3 refl = normalize(reflect(-light,neye));
     color += mspe * lspe * pow(max(0,dot(refl,normalize(-veye))),mshi); 
   }
+  color.a = mopacity;
   fcolor = color;
 }
 

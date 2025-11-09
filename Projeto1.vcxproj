@@ -76,10 +76,6 @@
     <Image Include="images\earth.jpg" />
     <Image Include="images\space.jpg" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\2d\fragment.glsl" />
-    <None Include="shaders\2d\vertex.glsl" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

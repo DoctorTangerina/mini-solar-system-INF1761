@@ -189,8 +189,6 @@ Cube::~Cube ()
 
 void Cube::Draw (StatePtr )
 {
-  glDisable(GL_CULL_FACE);
   glBindVertexArray(m_vao);
   glDrawElements(GL_TRIANGLES,36,GL_UNSIGNED_INT,0);
-  glEnable(GL_CULL_FACE);
 }

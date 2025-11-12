@@ -56,15 +56,15 @@ static void initialize (void)
   arcball = camera->CreateArcball();
 
   //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
-  LightPtr light = Light::Make(200.0f, 350.f, 400.0f, 1.0f, "world");
+  LightPtr light = Light::Make(2.0f, 3.5f, 4.0f, 1.0f, "world");
 
-  shadowcamera = Camera3D::Make(200.0f, 350.f, 400.0f);
-  shadowcamera->SetUpDir(1.0f, 0.0f, 0.0f);
-  shadowcamera->SetAngle(90.f);
-  shadowcamera->SetZPlanes(50.f, 500.f);
+  shadowcamera = Camera3D::Make(2.0f, 3.5f, 4.0f);
+  //shadowcamera->SetUpDir(1.0f, 0.0f, 0.0f);
+  //shadowcamera->SetAngle(90.f);
+  shadowcamera->SetZPlanes(0.1f, 7.5f);
 
-  auto near_plane = Variable<float>::Make("near_plane", 50.f);
-  auto far_plane = Variable<float>::Make("far_plane", 500.f);
+  auto near_plane = Variable<float>::Make("near_plane", 0.1f);
+  auto far_plane = Variable<float>::Make("far_plane", 7.5f);
 
   //create shadow map
   TexDepthPtr smap = TexDepth::Make("smap", DIM, DIM);
@@ -195,15 +195,16 @@ static void display (GLFWwindow* win)
     //desenha sm
     Error::Check("before sm render");
     fbo->Bind();
-    glClear(GL_DEPTH_BUFFER_BIT); // clear window
+    glClear(GL_DEPTH_BUFFER_BIT); // clear depth
     glViewport(0, 0, DIM, DIM);
     glPolygonOffset(5.0f, 5.0f);
     glEnable(GL_POLYGON_OFFSET_FILL);
-    glDepthMask(GL_TRUE);
+    glCullFace(GL_FRONT);
     scene->GetRoot()->SetShader(shader_sm);
     reflector->GetRoot()->SetShader(shader_sm);
     scene->Render(shadowcamera);
     reflector->Render(shadowcamera);
+    glCullFace(GL_BACK);
     glDisable(GL_POLYGON_OFFSET_FILL);
     glFlush();
     fbo->Unbind();
@@ -216,18 +217,17 @@ static void display (GLFWwindow* win)
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     
-    for (float& i : vec) {
+    /*for (float& i : vec) {
         if (i < 1.f) {
             std::cout << "temos depth: " << i << std::endl;
             throw Error();
         }
-    }
+    }*/
 
     //desenha cena
     int width, height;
     glfwGetFramebufferSize(win, &width, &height);
     glViewport(0, 0, width, height);
-    scene->Render(camera);
     glClear(GL_DEPTH_BUFFER_BIT); // clear window
     scene->GetRoot()->SetShader(shd_tex);
     scene->Render(camera);

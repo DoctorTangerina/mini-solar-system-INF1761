@@ -53,7 +53,6 @@ void Framebuffer::Bind ()
   glBindFramebuffer(GL_FRAMEBUFFER,m_fbo);
   if (m_colors.empty()) {
     glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
   }
   else {
     std::vector<GLenum> buffers;
@@ -67,5 +66,4 @@ void Framebuffer::Unbind ()
 {
   glBindFramebuffer(GL_FRAMEBUFFER,0);
   glDrawBuffer(GL_BACK);
-  glReadBuffer(GL_BACK);
 }

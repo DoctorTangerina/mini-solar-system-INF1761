@@ -94,12 +94,14 @@ void State::LoadMatrices ()
   glm::mat4 mvp = m_camera->GetProjMatrix() * 
                   m_camera->GetViewMatrix() * 
                   GetCurrentMatrix();
-  glm::mat4 mv = GetCurrentMatrix();      // to global space
+  glm::mat4 m = GetCurrentMatrix();      // to global space
+  glm::mat4 mv = m;
   if (shd->GetLightingSpace() == "camera") {
     mv = m_camera->GetViewMatrix() * mv;  // to camera space
   }
   glm::mat4 mn = glm::transpose(glm::inverse(mv));
   shd->SetUniform("Mvp",mvp);
+  shd->SetUniform("M", m);
   shd->SetUniform("Mv",mv);
   shd->SetUniform("Mn",mn);
   // load camera

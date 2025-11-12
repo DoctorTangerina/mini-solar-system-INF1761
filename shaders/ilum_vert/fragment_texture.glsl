@@ -6,6 +6,7 @@ in data {
   vec3 ve;
   vec3 t;
   vec2 texcoord;
+  vec4 stexcoord;
 } f;
 
 uniform vec4 lamb;
@@ -16,11 +17,13 @@ uniform vec4 mamb;
 uniform vec4 mdif;
 uniform vec4 mspe;
 uniform float mshi;
+uniform float mopacity;
 
 out vec4 color;
 
 uniform sampler2D decal;
 uniform sampler2D normal;
+uniform sampler2DShadow smap;
 
 // converte [0,1] -> [-1,1]
 vec3 expand (vec3 v)
@@ -46,13 +49,15 @@ void main (void)
 
     color = mamb * lamb;
 
+    float shadow = textureProj(smap, f.stexcoord);
     float ndotl = max(dot(normal, light), 0.0);
-    color += mdif * ldif * ndotl;
+    color += mdif * ldif * ndotl * shadow;
 
     if (ndotl > 0.0) {
         vec3 refl = normalize(reflect(-light, normal));
-        color += mspe * lspe * pow(max(dot(refl, veye),0.0), mshi);
+        color += mspe * lspe * pow(max(dot(refl, veye),0.0), mshi) * shadow;
     }
 
     color *= texture(decal, f.texcoord);
+    color.a = mopacity;
 }

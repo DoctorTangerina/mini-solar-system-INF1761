@@ -27,6 +27,7 @@
     <ClCompile Include="disk.cpp" />
     <ClCompile Include="earth_camera_engine.cpp" />
     <ClCompile Include="error.cpp" />
+    <ClCompile Include="framebuffer.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="light.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="sphere.cpp" />
     <ClCompile Include="state.cpp" />
     <ClCompile Include="texbuffer.cpp" />
+    <ClCompile Include="texdepth.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="transform.cpp" />
   </ItemGroup>
@@ -69,8 +71,10 @@
     <ClInclude Include="sphere.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="texbuffer.h" />
+    <ClInclude Include="texdepth.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="transform.h" />
+    <ClInclude Include="variable.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="images\earth.jpg" />

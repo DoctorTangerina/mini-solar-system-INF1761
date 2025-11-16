@@ -91,10 +91,11 @@ void State::LoadMatrices ()
 {
   // set matrices
   ShaderPtr shd = GetShader();
+  glm::mat4 m = GetCurrentMatrix();
   glm::mat4 mvp = m_camera->GetProjMatrix() * 
                   m_camera->GetViewMatrix() * 
-                  GetCurrentMatrix();
-  glm::mat4 mv = GetCurrentMatrix();      // to global space
+                  m;
+  glm::mat4 mv = m;      // to global space
   if (shd->GetLightingSpace() == "camera") {
     mv = m_camera->GetViewMatrix() * mv;  // to camera space
   }
@@ -102,6 +103,7 @@ void State::LoadMatrices ()
   shd->SetUniform("Mvp",mvp);
   shd->SetUniform("Mv",mv);
   shd->SetUniform("Mn",mn);
+  shd->SetUniform("M", m);
   // load camera
   m_camera->Load(shared_from_this());
 }

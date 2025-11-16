@@ -7,6 +7,8 @@
 #endif
 #include <GLFW/glfw3.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "arcball.h"
 #include "scene.h"
 #include "state.h"
@@ -21,6 +23,7 @@
 #include "shader.h"
 #include "light.h"
 #include "polyoffset.h"
+#include "variable.h"
 
 #include <iostream>
 #include <cassert>
@@ -28,7 +31,7 @@
 static float viewer_pos[3] = {2.0f, 3.5f, 4.0f};
 
 static ScenePtr scene;
-static Camera3DPtr camera;
+static Camera3DPtr camera, shadow_camera;
 static ArcballPtr arcball;
 
 static void initialize (void)
@@ -44,6 +47,8 @@ static void initialize (void)
   //camera->SetOrtho(true);
   arcball = camera->CreateArcball();
 
+  shadow_camera = Camera3D::Make(2.0f, 3.5f, 4.0f);
+
   //LightPtr light = ObjLight::Make(viewer_pos[0],viewer_pos[1],viewer_pos[2]);
   LightPtr light = Light::Make(2.0f, 3.5f, 4.0f,1.0f,"world");
 
@@ -53,8 +58,14 @@ static void initialize (void)
   AppearancePtr green = Material::Make(0.5f, 1.f, .5f);
   //AppearancePtr poff = PolygonOffset::Make(-10,-10);
   //AppearancePtr paper = Texture::Make("decal","../images/paper.jpg");
+
   AppearancePtr tex_earth = Texture::Make("decal", "./images/earth.jpg");
+  AppearancePtr tex_white = Texture::Make("decal", glm::vec3(1.0f, 1.0f, 1.0f));
+
   AppearancePtr normal_earth = Texture::Make("normal", "./images/earth-normal.png");
+  AppearancePtr normal_white = Texture::Make("normal", glm::vec3(0.5f, 0.5f, 1.0f));
+
+  AppearancePtr smap = Texture::Make("smap", "./images/mars-normal.png");
 
   // create shader
   ShaderPtr shader = Shader::Make(light, "camera");
@@ -68,6 +79,13 @@ static void initialize (void)
   shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
   shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
   shd_tex->Link();
+
+  glm::mat4 translate = glm::translate(glm::mat4(1.0f),
+      glm::vec3(0.5f, 0.5f, 0.5f));
+  glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+  glm::mat4 modelview = shadow_camera->GetProjMatrix() * shadow_camera->GetViewMatrix();
+  glm::mat4 mat = translate * scale * modelview;
+  auto mtex = Variable<glm::mat4>::Make("Mtex", mat);
 
   TransformPtr trf_table = Transform::Make();
   trf_table->Scale(3.0f,0.3f,3.0f);
@@ -95,12 +113,12 @@ static void initialize (void)
 
   // build scene
 
-  auto table = Node::Make(trf_table, {white}, {cube});
-  auto box = Node::Make(trf_box, {yellow}, {cube});
-  auto ball = Node::Make(trf_ball, {red}, {sphere});
-  auto earth = Node::Make(shd_tex, trf_earth, {white,tex_earth,normal_earth}, {sphere});
+  auto table = Node::Make(trf_table, {white,tex_white,normal_white}, {cube});
+  auto box = Node::Make(trf_box, {yellow,tex_white,normal_white}, {cube});
+  auto ball = Node::Make(trf_ball, {red,tex_white,normal_white}, {sphere});
+  auto earth = Node::Make(trf_earth, {white,tex_earth,normal_earth}, {sphere});
 
-  NodePtr root = Node::Make(shader, {table, box, ball, earth});
+  NodePtr root = Node::Make(shd_tex, {mtex, smap}, { table, box, ball, earth });
   scene = Scene::Make(root);
 }
 

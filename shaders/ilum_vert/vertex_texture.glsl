@@ -5,9 +5,11 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 tangent;
 layout(location = 3) in vec2 texcoord;
 
+uniform mat4 M;
 uniform mat4 Mv; 
 uniform mat4 Mn; 
 uniform mat4 Mvp;
+uniform mat4 Mtex;
 
 uniform vec4 lpos;  // light pos in eye space
 
@@ -17,6 +19,7 @@ out data {
   vec3 ve;
   vec3 t;
   vec2 texcoord;
+  vec4 stexcoord;
 } v;
 
 void main (void) 
@@ -40,6 +43,7 @@ void main (void)
     v.ve = veye;
     v.t = teye;
     v.texcoord = texcoord;
+    v.stexcoord = Mtex * M * coord;
 
     gl_Position = Mvp*coord; 
 }

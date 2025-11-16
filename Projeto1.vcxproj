@@ -33,7 +33,6 @@
     <ClCompile Include="main_3d.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="node.cpp" />
-    <ClCompile Include="orbit.cpp" />
     <ClCompile Include="polyoffset.cpp" />
     <ClCompile Include="quad.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -60,7 +59,6 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="node.h" />
-    <ClInclude Include="orbit.h" />
     <ClInclude Include="polyoffset.h" />
     <ClInclude Include="quad.h" />
     <ClInclude Include="scene.h" />
@@ -77,8 +75,8 @@
     <Image Include="images\space.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\2d\fragment.glsl" />
-    <None Include="shaders\2d\vertex.glsl" />
+    <None Include="shaders\ilum_vert\fragment_texture.glsl" />
+    <None Include="shaders\ilum_vert\vertex_texture.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

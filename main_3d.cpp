@@ -1,4 +1,3 @@
-
 #ifdef _WIN32
 #define GLAD_GL_IMPLEMENTATION // Necessary for headeronly version.
 #include <glad/gl.h>
@@ -24,15 +23,21 @@
 #include "light.h"
 #include "polyoffset.h"
 #include "variable.h"
+#include "framebuffer.h"
+#include "texdepth.h"
 
 #include <iostream>
 #include <cassert>
+
+#define DIM 512
 
 static float viewer_pos[3] = {2.0f, 3.5f, 4.0f};
 
 static ScenePtr scene;
 static Camera3DPtr camera, shadow_camera;
 static ArcballPtr arcball;
+static FramebufferPtr fbo;
+static ShaderPtr shd_tex, shader_sm;
 
 static void initialize (void)
 {
@@ -65,26 +70,30 @@ static void initialize (void)
   AppearancePtr normal_earth = Texture::Make("normal", "./images/earth-normal.png");
   AppearancePtr normal_white = Texture::Make("normal", glm::vec3(0.5f, 0.5f, 1.0f));
 
-  AppearancePtr smap = Texture::Make("smap", "./images/mars-normal.png");
+  TexDepthPtr smap = TexDepth::Make("smap", DIM, DIM);
+  smap->SetCompareMode();
 
-  // create shader
-  ShaderPtr shader = Shader::Make(light, "camera");
-  shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
-  shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
-  shader->Link();
+  fbo = Framebuffer::Make(smap);
+
+  // create sm shader
+  shader_sm = Shader::Make(light, "camera");
+  shader_sm->AttachVertexShader("./shaders/ilum_vert/vertex_sm.glsl");
+  shader_sm->AttachFragmentShader("./shaders/ilum_vert/fragment_sm.glsl");
+  shader_sm->Link();
 
   // Define a different shader for texture mapping
   // An alternative would be to use only this shader with a "white" texture for untextured objects
-  ShaderPtr shd_tex = Shader::Make(light, "camera");
+  shd_tex = Shader::Make(light, "camera");
   shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
   shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
   shd_tex->Link();
 
-  glm::mat4 translate = glm::translate(glm::mat4(1.0f),
-      glm::vec3(0.5f, 0.5f, 0.5f));
-  glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-  glm::mat4 modelview = shadow_camera->GetProjMatrix() * shadow_camera->GetViewMatrix();
-  glm::mat4 mat = translate * scale * modelview;
+  glm::mat4 bias(1.0f);
+  bias = glm::translate(bias, glm::vec3(0.5f));
+  bias = glm::scale(bias, glm::vec3(0.5f));
+  glm::mat4 lightProj = shadow_camera->GetProjMatrix();
+  glm::mat4 lightView = shadow_camera->GetViewMatrix();
+  glm::mat4 mat = bias * lightProj * lightView;
   auto mtex = Variable<glm::mat4>::Make("Mtex", mat);
 
   TransformPtr trf_table = Transform::Make();
@@ -125,7 +134,28 @@ static void initialize (void)
 static void display (GLFWwindow* win)
 { 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear window 
+
+  fbo->Bind();
+  glClear(GL_DEPTH_BUFFER_BIT);
+  glViewport(0, 0, DIM, DIM);
+  glPolygonOffset(1.0f, 1.0f);
+  glCullFace(GL_FRONT);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  Error::Check("before sm render");
+  scene->GetRoot()->SetShader(shader_sm);
+  scene->Render(shadow_camera);
+  Error::Check("after sm render");
+  glDisable(GL_POLYGON_OFFSET_FILL);
+  glCullFace(GL_BACK);
+  glFlush();
+  fbo->Unbind();
+
+  int height, width;
+  glfwGetFramebufferSize(win, &width, &height);
+  glViewport(0, 0, width, height);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Error::Check("before render");
+  //scene->GetRoot()->SetShader(shd_tex);
   scene->Render(camera);
   Error::Check("after render");
 }

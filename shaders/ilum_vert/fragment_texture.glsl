@@ -22,7 +22,7 @@ out vec4 color;
 
 uniform sampler2D decal;
 uniform sampler2D normal;
-uniform sampler2D smap;
+uniform sampler2DShadow smap;
 
 // converte [0,1] -> [-1,1]
 vec3 expand (vec3 v)
@@ -49,7 +49,7 @@ void main (void)
     color = mamb * lamb;
 
     float ndotl = max(dot(normal, light), 0.0);
-    vec4 shadow = textureProj(smap, f.stexcoord);
+    float shadow = textureProj(smap, f.stexcoord);
     color += mdif * ldif * ndotl * shadow;
 
     if (ndotl > 0.0) {

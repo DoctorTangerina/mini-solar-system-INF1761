@@ -25,6 +25,7 @@
 #include "texdepth.h"
 #include "framebuffer.h"
 #include "variable.h"
+#include "clipplane.h"
 
 #include <iostream>
 #include <cassert>
@@ -40,6 +41,7 @@ static Camera3DPtr camera, shadowcamera;
 static ArcballPtr arcball;
 static FramebufferPtr fbo;
 static ShaderPtr shd_tex, shader_sm;
+static ClipPlanePtr clip;
 
 static void initialize (void)
 {
@@ -78,12 +80,15 @@ static void initialize (void)
   AppearancePtr red = Material::Make(1.0f, 0.5f, 0.5f);
   AppearancePtr green = Material::Make(0.5f, 1.f, .5f);
   AppearancePtr poff = PolygonOffset::Make(-10,-10);
+  AppearancePtr poff2 = PolygonOffset::Make(10, 10);
   //AppearancePtr paper = Texture::Make("decal","../images/paper.jpg");
   AppearancePtr tex_white = Texture::Make("decal", glm::vec3(1.0f));
   AppearancePtr tex_earth = Texture::Make("decal", "./images/earth.jpg");
   AppearancePtr normal_white = Texture::Make("normal", glm::vec3(0.5f, 0.5f, 1.0f));
   AppearancePtr normal_earth = Texture::Make("normal", "./images/earth-normal.png");
   //AppearancePtr tex_wood = Texture::Make("decal", "./images/wood.jpg");
+
+  clip = ClipPlane::Make("plane", 0.f, 1.f, 0.f, 0.f);
 
   // create shader
   ShaderPtr shader = Shader::Make(light, "camera");
@@ -110,7 +115,7 @@ static void initialize (void)
 
   TransformPtr trf_table = Transform::Make();
   trf_table->Scale(3.0f,0.3f,3.0f);
-  trf_table->Translate(0.0f,-1.0f,0.0f);
+  trf_table->Translate(0.0f,-5.0f,0.0f);
 
   TransformPtr trf_box = Transform::Make();
   trf_box->Scale(1.f,.5f,1.f);
@@ -156,13 +161,14 @@ static void initialize (void)
 
   // build scene
 
-  auto box = Node::Make(trf_box, {yellow, tex_white, normal_white}, {cube});
-  auto ball = Node::Make(trf_ball, {red, tex_white, normal_white}, {sphere});
+  auto box = Node::Make(trf_box, {yellow,tex_white,normal_white}, {cube});
+  auto ball = Node::Make(trf_ball, {red,tex_white,normal_white}, {sphere});
   auto earth = Node::Make(trf_earth, {white,tex_earth,normal_earth}, {sphere});
-  auto floor = Node::Make(shd_tex, trf_floor, {smap, mtex, white_floor, tex_white, normal_white}, {quad});
+  auto table = Node::Make(shd_tex, trf_table, { smap,mtex,white,poff2,tex_white,normal_white}, {cube});
+  auto floor = Node::Make(shd_tex, trf_floor, {smap, mtex, poff, white_floor, tex_white, normal_white}, {quad});
   auto debug_quad = Node::Make(shader_debug, {smap, near_plane, far_plane}, { quad });
 
-  NodePtr root = Node::Make(shd_tex, {smap, mtex}, { box, ball, earth });
+  NodePtr root = Node::Make(shd_tex, {smap, mtex, clip}, { table, box, ball, earth });
   scene = Scene::Make(root);
   reflector = Scene::Make(floor);
   debug = Scene::Make(debug_quad);
@@ -191,21 +197,17 @@ static void display (GLFWwindow* win)
     root->SetTransform(nullptr);
     glDisable(GL_STENCIL_TEST);
     glClear(GL_STENCIL_BUFFER_BIT);
+    clip->toggleClipping();
 
     //desenha sm
     Error::Check("before sm render");
     fbo->Bind();
     glClear(GL_DEPTH_BUFFER_BIT); // clear depth
     glViewport(0, 0, DIM, DIM);
-    glPolygonOffset(5.0f, 5.0f);
-    glEnable(GL_POLYGON_OFFSET_FILL);
     glCullFace(GL_FRONT);
     scene->GetRoot()->SetShader(shader_sm);
-    reflector->GetRoot()->SetShader(shader_sm);
     scene->Render(shadowcamera);
-    reflector->Render(shadowcamera);
     glCullFace(GL_BACK);
-    glDisable(GL_POLYGON_OFFSET_FILL);
     glFlush();
     fbo->Unbind();
     Error::Check("after sm render");
@@ -234,7 +236,8 @@ static void display (GLFWwindow* win)
     
     //debug
     //debug->Render(camera);
-    
+
+    clip->toggleClipping();
     //desenha refletor
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);

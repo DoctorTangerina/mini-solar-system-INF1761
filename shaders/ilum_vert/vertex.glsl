@@ -3,18 +3,15 @@
 layout(location = 0) in vec4 coord;
 layout(location = 1) in vec3 normal;
 
-uniform mat4 M;
 uniform mat4 Mv; 
 uniform mat4 Mn; 
 uniform mat4 Mvp;
-uniform mat4 Mtex;
 
 uniform vec4 lpos;  // light pos in eye space
 
 out vec3 n;
 out vec3 l;
 out vec3 v;
-out vec4 stexcoord;
 
 void main (void) 
 {
@@ -29,7 +26,6 @@ void main (void)
   n = neye;
   l = light;
   v = veye;
-  stexcoord = Mtex * M * coord;
   gl_Position = Mvp*coord; 
 }
 

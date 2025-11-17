@@ -24,6 +24,7 @@ out data {
   vec3 ve;
   vec3 t;
   vec2 texcoord;
+  vec4 stexcoord;
 } v;
 
 void main (void) 
@@ -50,6 +51,7 @@ void main (void)
     v.ve = veye;
     v.t = teye;
     v.texcoord = texcoord;
+    v.stexcoord = Mtex * M * coord;
 
     gl_Position = Mvp*coord;
 }

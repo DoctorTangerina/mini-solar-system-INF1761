@@ -34,11 +34,11 @@
 
 static float viewer_pos[3] = {2.0f, 3.5f, 4.0f};
 
-static ScenePtr scene, reflector;
+static ScenePtr scene, reflector, table_s;
 static Camera3DPtr camera, shadow_camera;
 static ArcballPtr arcball;
 static FramebufferPtr fbo;
-static ShaderPtr shd_tex, shader_sm;
+static ShaderPtr shd_tex, shd_tex_sm, shader_sm;
 static TexDepthPtr smap;
 static ClipPlanePtr clip;
 
@@ -82,24 +82,24 @@ static void initialize (void)
   fbo = Framebuffer::Make(smap);
   clip = ClipPlane::Make("plane", 0.f, 1.f, 0.f, 0.f);
 
-  // create shader
-  ShaderPtr shader = Shader::Make(light, "camera");
-  shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
-  shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
-  shader->Link();
+  // create shd_tex
+  shd_tex = Shader::Make(light, "camera");
+  shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
+  shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
+  shd_tex->Link();
 
-  // create sm shader
+  // create sm shd_tex
   shader_sm = Shader::Make(light, "camera");
   shader_sm->AttachVertexShader("./shaders/ilum_vert/vertex_sm.glsl");
   shader_sm->AttachFragmentShader("./shaders/ilum_vert/fragment_sm.glsl");
   shader_sm->Link();
 
-  // Define a different shader for texture mapping
-  // An alternative would be to use only this shader with a "white" texture for untextured objects
-  shd_tex = Shader::Make(light, "camera");
-  shd_tex->AttachVertexShader("./shaders/ilum_vert/vertex_texture.glsl");
-  shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
-  shd_tex->Link();
+  // Define a different shd_tex for texture mapping
+  // An alternative would be to use only this shd_tex with a "white" texture for untextured objects
+  shd_tex_sm = Shader::Make(light, "camera");
+  shd_tex_sm->AttachVertexShader("./shaders/ilum_vert/vertex_texture_sm.glsl");
+  shd_tex_sm->AttachFragmentShader("./shaders/ilum_vert/fragment_texture_sm.glsl");
+  shd_tex_sm->Link();
 
   glViewport(0, 0, DIM, DIM);
   glm::mat4 bias(1.0f);
@@ -144,15 +144,16 @@ static void initialize (void)
 
   // build scene
 
-  auto table = Node::Make(trf_table, {white,tex_white,normal_white}, {cube});
   auto box = Node::Make(trf_box, {yellow,tex_white,normal_white}, {cube});
   auto ball = Node::Make(trf_ball, {red,tex_white,normal_white}, {sphere});
   auto earth = Node::Make(trf_earth, {white,tex_earth,normal_earth}, {sphere});
-  auto floor = Node::Make(shader, trf_floor, {white_floor}, {quad});
+  auto table = Node::Make(shd_tex_sm, trf_table, {white_floor,tex_white,normal_white}, {cube});
+  auto floor = Node::Make(shd_tex, trf_floor, {white_floor,tex_white,normal_white}, {quad});
 
-  NodePtr root = Node::Make(shd_tex, {mtex}, { table, box, ball, earth });
+  NodePtr root = Node::Make(shd_tex_sm, {mtex}, { box, ball, earth });
   scene = Scene::Make(root);
   reflector = Scene::Make(floor);
+  table_s = Scene::Make(table);
 }
 
 static void display (GLFWwindow* win)
@@ -166,6 +167,8 @@ static void display (GLFWwindow* win)
   glCullFace(GL_FRONT);
   glEnable(GL_POLYGON_OFFSET_FILL);
   Error::Check("before sm render");
+  table_s->GetRoot()->SetShader(shader_sm);
+  table_s->Render(shadow_camera);
   scene->GetRoot()->SetShader(shader_sm);
   scene->Render(shadow_camera);
   Error::Check("after sm render");
@@ -200,6 +203,7 @@ static void display (GLFWwindow* win)
   glDisable(GL_STENCIL_TEST);
   
   Error::Check("before render");
+  root->SetShader(shd_tex_sm);
   root->AddAppearance(smap);
   scene->Render(camera);
   root->PopAppearance();
@@ -209,7 +213,11 @@ static void display (GLFWwindow* win)
   glDepthMask(GL_FALSE);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  reflector->Render(camera);
+  NodePtr table_root = table_s->GetRoot();
+  table_root->SetShader(shd_tex_sm);
+  table_root->AddAppearance(smap);
+  table_s->Render(camera);
+  table_root->PopAppearance();
   glDisable(GL_BLEND);
   glDepthMask(GL_TRUE);
 }

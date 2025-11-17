@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cassert>
 
-#define DIM 512
+#define DIM 1024
 
 static float viewer_pos[3] = {2.0f, 3.5f, 4.0f};
 
@@ -88,6 +88,7 @@ static void initialize (void)
   shd_tex->AttachFragmentShader("./shaders/ilum_vert/fragment_texture.glsl");
   shd_tex->Link();
 
+  glViewport(0, 0, DIM, DIM);
   glm::mat4 bias(1.0f);
   bias = glm::translate(bias, glm::vec3(0.5f));
   bias = glm::scale(bias, glm::vec3(0.5f));
@@ -95,6 +96,9 @@ static void initialize (void)
   glm::mat4 lightView = shadow_camera->GetViewMatrix();
   glm::mat4 mat = bias * lightProj * lightView;
   auto mtex = Variable<glm::mat4>::Make("Mtex", mat);
+  int width, height;
+  glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+  glViewport(0, 0, width, height);
 
   TransformPtr trf_table = Transform::Make();
   trf_table->Scale(3.0f,0.3f,3.0f);
@@ -138,7 +142,7 @@ static void display (GLFWwindow* win)
   fbo->Bind();
   glClear(GL_DEPTH_BUFFER_BIT);
   glViewport(0, 0, DIM, DIM);
-  glPolygonOffset(1.0f, 1.0f);
+  //glPolygonOffset(1.0f, 1.0f);
   glCullFace(GL_FRONT);
   glEnable(GL_POLYGON_OFFSET_FILL);
   Error::Check("before sm render");
@@ -155,7 +159,7 @@ static void display (GLFWwindow* win)
   glViewport(0, 0, width, height);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Error::Check("before render");
-  //scene->GetRoot()->SetShader(shd_tex);
+  scene->GetRoot()->SetShader(shd_tex);
   scene->Render(camera);
   Error::Check("after render");
 }

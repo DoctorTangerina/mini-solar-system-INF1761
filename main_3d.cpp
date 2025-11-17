@@ -25,6 +25,7 @@
 #include "variable.h"
 #include "framebuffer.h"
 #include "texdepth.h"
+#include "clipplane.h"
 
 #include <iostream>
 #include <cassert>
@@ -39,6 +40,7 @@ static ArcballPtr arcball;
 static FramebufferPtr fbo;
 static ShaderPtr shd_tex, shader_sm;
 static TexDepthPtr smap;
+static ClipPlanePtr clip;
 
 static void initialize (void)
 {
@@ -46,6 +48,7 @@ static void initialize (void)
   glClearColor(1.0f,1.0f,1.0f,1.0f);
   // enable depth test 
   glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
   glEnable(GL_CULL_FACE);  // cull back faces
 
   // create objects
@@ -64,6 +67,7 @@ static void initialize (void)
   AppearancePtr red = Material::Make(1.0f, 0.5f, 0.5f);
   AppearancePtr green = Material::Make(0.5f, 1.f, .5f);
   AppearancePtr poff = PolygonOffset::Make(-10,-10);
+  AppearancePtr poff2 = PolygonOffset::Make(10, 10);
   //AppearancePtr paper = Texture::Make("decal","../images/paper.jpg");
 
   AppearancePtr tex_earth = Texture::Make("decal", "./images/earth.jpg");
@@ -76,7 +80,9 @@ static void initialize (void)
   smap->SetCompareMode();
 
   fbo = Framebuffer::Make(smap);
+  clip = ClipPlane::Make("plane", 0.f, 1.f, 0.f, 0.f);
 
+  // create shader
   ShaderPtr shader = Shader::Make(light, "camera");
   shader->AttachVertexShader("./shaders/ilum_vert/vertex.glsl");
   shader->AttachFragmentShader("./shaders/ilum_vert/fragment.glsl");
@@ -109,7 +115,7 @@ static void initialize (void)
 
   TransformPtr trf_table = Transform::Make();
   trf_table->Scale(3.0f,0.3f,3.0f);
-  trf_table->Translate(0.0f,-1.0f,0.0f);
+  trf_table->Translate(0.0f,-1.01f,0.0f);
 
   TransformPtr trf_box = Transform::Make();
   trf_box->Scale(1.f,.5f,1.f);
@@ -131,7 +137,7 @@ static void initialize (void)
   Error::Check("before cube");
   ShapePtr cube = Cube::Make();
   Error::Check("before quad");
-  ShapePtr quad = Quad::Make();
+  ShapePtr quad = Quad::Make(64, 64);
   Error::Check("before sphere");
   ShapePtr sphere = Sphere::Make();
   Error::Check("after shps");
@@ -186,7 +192,9 @@ static void display (GLFWwindow* win)
   root->SetTransform(trf);
   glFrontFace(GL_CW); //invert front face incidence
   root->SetShader(shd_tex);
+  root->AddAppearance(clip);
   scene->Render(camera);
+  root->PopAppearance();
   glFrontFace(GL_CCW); //restore front face incidence
   root->SetTransform(nullptr);
   glDisable(GL_STENCIL_TEST);

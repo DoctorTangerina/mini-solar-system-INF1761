@@ -101,6 +101,7 @@ void State::LoadMatrices ()
   }
   glm::mat4 mn = glm::transpose(glm::inverse(mv));
   shd->SetUniform("Mvp",mvp);
+  shd->SetUniform("M", m);
   shd->SetUniform("Mv",mv);
   shd->SetUniform("Mn",mn);
   shd->SetUniform("M", m);

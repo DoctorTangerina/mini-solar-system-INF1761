@@ -17,6 +17,7 @@ uniform vec4 mamb;
 uniform vec4 mdif;
 uniform vec4 mspe;
 uniform float mshi;
+uniform float mopacity;
 
 out vec4 color;
 
@@ -58,4 +59,5 @@ void main (void)
     }
 
     color *= texture(decal, f.texcoord);
+    color.a = mopacity;
 }

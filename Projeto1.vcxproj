@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="arcball.cpp" />
     <ClCompile Include="camera3d.cpp" />
+    <ClCompile Include="clipplane.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="computeshader.cpp" />
     <ClCompile Include="cube.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="appearance.h" />
     <ClInclude Include="arcball.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="clipplane.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="computeshader.h" />
     <ClInclude Include="cube.h" />

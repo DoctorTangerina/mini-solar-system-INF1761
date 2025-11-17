@@ -201,6 +201,10 @@ void Node::AddAppearance (AppearancePtr app)
 {
   m_apps.push_back(app);
 }
+void Node::PopAppearance()
+{
+  m_apps.pop_back();
+}
 void Node::AddShape (ShapePtr shp)
 {
   m_shps.push_back(shp);

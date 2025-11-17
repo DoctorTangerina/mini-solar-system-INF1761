@@ -96,6 +96,7 @@ public:
   void SetShader (ShaderPtr shader);
   void SetTransform (TransformPtr trf);
   void AddAppearance (AppearancePtr app);
+  void PopAppearance ();
   void AddShape (ShapePtr shp);
   void AddNode (NodePtr node);
   void SetParent (NodePtr parent);

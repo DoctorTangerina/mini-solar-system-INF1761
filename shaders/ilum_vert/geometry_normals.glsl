@@ -8,19 +8,20 @@ in VS_out {
     vec3 n;
 } v[];
 
-uniform mat4 Mvp;
+uniform mat4 Vp;
 
 void main()
 {
     for (int i = 0; i < 3; i++)
     {
-        vec3 p0 = v[i].pos;
-        vec3 p1 = p0 + v[i].n * 0.2;     // direção da normal
+        vec3 p = v[i].pos;
+        vec3 n = v[i].n;
+        vec3 end = p + n * 0.2;
 
-        gl_Position = Mvp * vec4(p0, 1.0);
+        gl_Position = Vp * vec4(p, 1.0);
         EmitVertex();
 
-        gl_Position = Mvp * vec4(p1, 1.0);
+        gl_Position = Vp * vec4(end, 1.0);
         EmitVertex();
 
         EndPrimitive();

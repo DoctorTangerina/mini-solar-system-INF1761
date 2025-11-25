@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 coord;
 layout(location = 1) in vec3 normal;
 
-uniform mat4 Mvp;
+uniform mat4 M;
 uniform mat4 Mn;
 
 out VS_out {
@@ -13,7 +13,7 @@ out VS_out {
 
 void main()
 {
-    v.pos = coord;
+    v.pos = vec3(M * vec4(coord, 1.0));
     v.n = normalize(mat3(Mn) * normal);
-    gl_Position = Mvp * vec4(coord, 1.0);
+    gl_Position = vec4(v.pos, 1.0);
 }

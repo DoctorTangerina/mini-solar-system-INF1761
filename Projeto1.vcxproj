@@ -29,6 +29,7 @@
     <ClCompile Include="earth_camera_engine.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="framebuffer.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="light.cpp" />
@@ -82,10 +83,15 @@
     <Image Include="images\space.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\ilum_vert\fragment_normals.glsl" />
     <None Include="shaders\ilum_vert\fragment_sm.glsl" />
     <None Include="shaders\ilum_vert\fragment_texture.glsl" />
+    <None Include="shaders\ilum_vert\fragment_texture_sm.glsl" />
+    <None Include="shaders\ilum_vert\geometry_normals.glsl" />
+    <None Include="shaders\ilum_vert\vertex_normals.glsl" />
     <None Include="shaders\ilum_vert\vertex_sm.glsl" />
     <None Include="shaders\ilum_vert\vertex_texture.glsl" />
+    <None Include="shaders\ilum_vert\vertex_texture_sm.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

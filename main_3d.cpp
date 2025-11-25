@@ -38,7 +38,7 @@ static ScenePtr scene, reflector, table_s;
 static Camera3DPtr camera, shadow_camera;
 static ArcballPtr arcball;
 static FramebufferPtr fbo;
-static ShaderPtr shd_tex, shd_tex_sm, shader_sm;
+static ShaderPtr shd_tex, shd_tex_sm, shader_sm, shd_normals;
 static TexDepthPtr smap;
 static ClipPlanePtr clip;
 
@@ -101,6 +101,14 @@ static void initialize (void)
   shd_tex_sm->AttachFragmentShader("./shaders/ilum_vert/fragment_texture_sm.glsl");
   shd_tex_sm->Link();
 
+  // create shd_normals to use geometry shader
+  shd_normals = Shader::Make(light, "camera");
+  shd_normals->AttachVertexShader("./shaders/ilum_vert/vertex_normals.glsl");
+  shd_normals->AttachGeometryShader("./shaders/ilum_vert/geometry_normals.glsl");
+  shd_normals->AttachFragmentShader("./shaders/ilum_vert/fragment_normals.glsl");
+  shd_normals->Link();
+
+
   glViewport(0, 0, DIM, DIM);
   glm::mat4 bias(1.0f);
   bias = glm::translate(bias, glm::vec3(0.5f));
@@ -133,6 +141,15 @@ static void initialize (void)
   trf_floor->Rotate(90.f, -1, 0, 0);
   trf_floor->Scale(3.0f, 3.f, 1.0f);
 
+  TransformPtr trf_cube_normals = Transform::Make();
+  trf_cube_normals->Scale(0.4f, 0.4f, 0.4f);
+  trf_cube_normals->Translate(1.5f, 1.5f, 0.0f);
+
+  TransformPtr trf_ball_normals = Transform::Make();
+  trf_ball_normals->Scale(.4f, .4f, .4f);
+  trf_ball_normals->Translate(2.5f, 1.5f, 2.5f);
+
+
   Error::Check("before shps");
   Error::Check("before cube");
   ShapePtr cube = Cube::Make();
@@ -149,8 +166,12 @@ static void initialize (void)
   auto earth = Node::Make(trf_earth, {white,tex_earth,normal_earth}, {sphere});
   auto table = Node::Make(shd_tex_sm, trf_table, {white_floor,tex_white,normal_white}, {cube});
   auto floor = Node::Make(shd_tex, trf_floor, {white_floor,tex_white,normal_white}, {quad});
+  auto cube_normals = Node::Make(shd_normals, trf_cube_normals, {}, {cube});
+  auto cube_visual = Node::Make(trf_cube_normals, {green, tex_white, normal_white}, {cube});
+  auto ball_normals = Node::Make(shd_normals, trf_ball_normals, {}, {sphere});
+  auto ball_visual = Node::Make(trf_ball_normals, {green, tex_white, normal_white}, {sphere});
 
-  NodePtr root = Node::Make(shd_tex_sm, {mtex}, { box, ball, earth });
+  NodePtr root = Node::Make(shd_tex_sm, {mtex}, { box, ball, earth, cube_normals, cube_visual, ball_normals, ball_visual });
   scene = Scene::Make(root);
   reflector = Scene::Make(floor);
   table_s = Scene::Make(table);
@@ -220,6 +241,8 @@ static void display (GLFWwindow* win)
   table_root->PopAppearance();
   glDisable(GL_BLEND);
   glDepthMask(GL_TRUE);
+
+
 }
 
 static void error (int code, const char* msg)

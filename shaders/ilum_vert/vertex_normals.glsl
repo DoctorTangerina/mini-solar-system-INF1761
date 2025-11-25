@@ -14,6 +14,6 @@ out VS_out {
 void main()
 {
     v.pos = vec3(M * vec4(coord, 1.0));
-    v.n = normalize(mat3(Mn) * normal);
+    v.n = normalize(normal);
     gl_Position = vec4(v.pos, 1.0);
 }
